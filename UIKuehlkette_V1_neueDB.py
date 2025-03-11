@@ -14,16 +14,43 @@ ETS-CoolChainProject-2 V1.3 Phase 2
 letzte Änderung: 25.02.2025
 """
 
+import os
+import json
 import pyodbc
 import customtkinter as ctk
 from tkinter import messagebox
 from datetime import timedelta, datetime
 
-# Verbindungsinfo
-server = 'sc-db-server.database.windows.net'
-database = 'supplychain'
-username = 'rse'
-password = 'Pa$$w0rd'
+def load_config():
+    """
+    Lädt die Konfigurationsdaten aus der config.json Datei und gibt sie als Dictionary zurück.
+    Falls die Datei nicht existiert oder fehlerhaft ist, wird ein Fehler ausgegeben.
+    """
+    config_path = "config.json"
+
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Die Konfigurationsdatei '{config_path}' wurde nicht gefunden.")
+
+    try:
+        with open(config_path, "r", encoding="utf-8") as file:
+            config = json.load(file)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Fehler beim Einlesen der JSON-Datei: {e}")
+
+    required_keys = ["server", "database", "username", "password", "password_cryp", "init_vector_crypt"]
+    for key in required_keys:
+        if key not in config:
+            raise KeyError(f"Fehlender Schlüssel '{key}' in der Konfigurationsdatei.")
+
+    return config
+
+config = load_config()
+server = config["server"]
+database = config["database"]
+username = config["username"]
+password = config["password"]
+password_cryp = config["password_cryp"]
+init_vector_crypt = config["init_vector_crypt"]
 
 conn_str = (
     f'DRIVER={{ODBC Driver 18 for SQL Server}};'
@@ -56,6 +83,8 @@ transport_ids = [
     "76381745965049879836902"
 ]
 
+# Passwörter und config laden
+
 # Def Verbindung Datenbank
 def fetch_data():
     transport_id = dropdown_transport_id.get()
@@ -66,94 +95,124 @@ def fetch_data():
     try:
         conn = pyodbc.connect(conn_str)
         cursor = conn.cursor()
-        cursor.execute('''
-            SELECT ts.transportstation, ts.category, c.direction, c.datetime, 
-                   (SELECT TOP 1 t.temperature 
-                    FROM tempdata t 
-                    WHERE t.datetime <= c.datetime 
-                    AND c.transportstationID = ts.transportstationID 
-                    ORDER BY t.datetime DESC) AS temperature
-            FROM coolchain c
-            JOIN transportstation ts ON c.transportstationID = ts.transportstationID
-            WHERE c.transportID = ? 
-        ''', (transport_id,))
         
-        results = cursor.fetchall()
+        # SQL-Query, um die transportstation-Daten mit der coolchain-Tabelle zu kombinieren
+        query = '''
+            SELECT cc.transportID, cc.transportstationID, ts.transportstation, ts.category, ts.plz, 
+                   cc.direction, cc.datetime
+            FROM coolchain cc
+            JOIN transportstation ts ON cc.transportstationID = ts.transportstationID
+            WHERE cc.transportID = ?
+            ORDER BY cc.datetime ASC  -- Sortierung nach Timestamp (älteste zuerst)
+        '''
+        cursor.execute(query, (transport_id,))
+        results = cursor.fetchall()  # Ergebnisse abrufen
         display_results(results, transport_id)
-    except pyodbc.Error as e:
+        
+    except pyodbc.Error as e:  # Fehlerbehandlung
         messagebox.showerror(lang["Fehler bei Datenbankzugriff. Netzwerkverbindung prüfen."], str(e))
     finally:
         if conn:
             conn.close()
+
             
-            
+# Def Daten Anzeigen
 # Def Daten Anzeigen
 def display_results(results, transport_id):
     for widget in frame_results.winfo_children():
         widget.destroy()
 
     if results:
-        headers = [lang["Ort"], lang["Kategorie"], lang["Richtung"], lang["Zeitstempel"], lang["Temperatur"], lang["Dauer"], lang["Warnung"]]
+        headers = [
+            lang["Transport ID"], lang["Transportstation ID"], lang["Ort"], lang["Kategorie"],
+            lang["PLZ"], lang["Richtung"], lang["Zeitstempel"], lang["Dauer"], lang["Warnung"]
+        ]
+
         for i, header in enumerate(headers):
             label = ctk.CTkLabel(frame_results, text=header, font=("Arial", 12, "bold"))
             label.grid(row=0, column=i, padx=10, pady=5)
 
         previous_datetime = None
         previous_direction = None
-        first_datetime = results[0][3]
+        first_datetime = results[0][6]  # Spalte 'datetime' in der neuen Struktur
         last_datetime = None
         previous_location = None
 
         for row_index, row in enumerate(results, start=1):
-            transportstation, category, direction, current_datetime, temperature = row
+            transport_id, transportstation_id, transportstation, category, plz, direction, current_datetime = row
+
             last_datetime = current_datetime
             last_direction = direction
             warnung = " "
 
+            # Berechnung der Zeitdifferenz
             if previous_datetime:
                 time_difference = current_datetime - previous_datetime
                 time_diff_str = str(time_difference)
+
                 if time_difference.total_seconds() < 1:
                     warnung = lang["Nicht plausibler Zeitstempel"]
-                elif direction == "in" and time_difference > timedelta(minutes=10):
+
+                if direction == "in" and time_difference > timedelta(minutes=10):
                     warnung = lang["Übergabezeit über 10 Minuten"]
+
             else:
                 time_diff_str = "N/A"
 
-            if previous_direction and previous_direction == direction:
-                warnung = lang["Doppelter oder fehlender Eintrag"]
+            # Überprüfung auf doppelte oder fehlende Einträge
+            if previous_direction:
+                if previous_direction == direction:
+                    warnung = lang["Doppelter oder fehlender Eintrag"]
+
+            previous_datetime = current_datetime
+            previous_direction = direction
 
             if direction == "in" and previous_location == transportstation:
                 warnung = lang["Transportstation ist doppelt"]
 
-            if last_direction == "in" and row_index == len(results):
-                warnung = lang["Lieferung nicht abgeschlossen"]
-
-            previous_datetime = current_datetime
-            previous_direction = direction
             previous_location = transportstation
 
-            row_data = [transportstation, category, direction, current_datetime, temperature, time_diff_str, warnung]
+            row_data = [
+                transport_id, transportstation_id, transportstation, category, plz,
+                direction, current_datetime, time_diff_str, warnung
+            ]
+
+            # Spalten in der UI anzeigen
             for col_index, item in enumerate(row_data):
-                label_style = ("Arial", 14, "bold") if col_index == 6 and warnung.strip() else ("Arial", 12)
-                text_color = "red" if col_index == 6 and warnung.strip() else "white"
-                label = ctk.CTkLabel(frame_results, text=str(item), font=label_style, text_color=text_color)
+                if col_index == 8:  # Warnung farbig anzeigen
+                    label = ctk.CTkLabel(frame_results, text=str(item), font=("Arial", 14, "bold"), text_color="red")
+                else:
+                    label = ctk.CTkLabel(frame_results, text=str(item), font=("Arial", 12))
                 label.grid(row=row_index, column=col_index, padx=10, pady=5)
 
+        # Prüfung, ob die gesamte Transportdauer über 48 Stunden liegt
         total_time_difference = last_datetime - first_datetime
         if total_time_difference > timedelta(hours=48):
-            final_error_label = ctk.CTkLabel(frame_results, text=lang["Transportdauer über 48 Stunden"], font=("Arial", 14, "bold"), text_color="red")
-            final_error_label.grid(row=row_index + 1, column=6, pady=0)
+            final_error_label = ctk.CTkLabel(
+                frame_results, text=lang["Transportdauer über 48 Stunden"], font=("Arial", 14, "bold"), text_color="red"
+            )
+            final_error_label.grid(row=row_index + 1, column=8, columnspan=1, pady=0)
 
+        # Prüfung, ob die Lieferung unvollständig ist (wenn letzte Richtung 'in' war)
         if last_direction == "in":
             delta_to_present = datetime.now() - last_datetime
             days = delta_to_present.days
-            hours = delta_to_present.seconds // 3600
-            final_error_label = ctk.CTkLabel(frame_results, text=lang["Lieferung nicht vollständig. Zeit seit letztem Eintrag:"] + f" {days}d {hours}h", font=("Arial", 14, "bold"), text_color="red")
-            final_error_label.grid(row=row_index + 2, column=6, pady=0)
+            hours = delta_to_present.seconds // 3600    
+            final_error_label = ctk.CTkLabel(
+                frame_results, text=lang["Lieferung nicht vollständig. Zeit seit letztem Eintrag: "] + f" {days}d {hours}h",
+                font=("Arial", 14, "bold"), text_color="red"
+            )
+            final_error_label.grid(row=row_index + 2, column=8, columnspan=1, pady=0)
+
     else:
-        no_result_label = ctk.CTkLabel(frame_results, text=lang["Diese Transport ID existiert nicht: "] + transport_id, font=("Arial", 14, "bold"), text_color="black", fg_color="yellow")
-        no_result_label.pack(pady=20)     
+        # Falls keine Daten zur Transport ID gefunden wurden
+        no_result_label = ctk.CTkLabel(
+            frame_results, text=lang["Diese Transport ID existiert nicht: "] + transport_id,
+            font=("Arial", 14, "bold"), text_color="black", fg_color="yellow"
+        )
+        no_result_label.pack(pady=20)
+
+
 # lokalisierung DE
 def set_german():
     global lang
@@ -191,6 +250,9 @@ def update_gui_language():
 # hinterlegung der Sprachen
 LANGUAGES = {
     "DE": {
+        "Transport ID":"Transport ID",
+        "Transportstation ID":"Transportstation ID",
+        "PLZ":"PLZ",
         "Transport ID eingeben:": "Transport ID eingeben:",
         "Daten prüfen": "Daten prüfen",
         "Ort": "Ort",
@@ -212,6 +274,9 @@ LANGUAGES = {
         "Temperatur": "Temperatur"
     },
     "EN": {
+        "Transport ID":"Transport ID",
+        "Transportstation ID":"Transportstation ID",
+        "PLZ":"Postal Code",
         "Transport ID eingeben:": "Enter Transport ID:",
         "Daten prüfen": "Check Data",
         "Ort": "Location",
@@ -233,6 +298,9 @@ LANGUAGES = {
         "Temperatur": "Temperature"
     },
     "AR": {
+        "Transport ID":"معرف النقل",
+        "Transportstation ID":"معرف النقل",
+        "PLZ": "PLZ",
         "Transport ID eingeben:": "أدخل معرف النقل:",
         "Daten prüfen": "تحقق من البيانات",
         "Ort": "الموقع",
@@ -295,18 +363,3 @@ button_language_2.place(relx=1.0, rely=0.0, anchor="ne", x=-20, y=20)
 # Programmstart
 root.mainloop()
 
-
-
-"""
-Copy Paste IDs mit Fehlern:
-
-15668407856331648336231                 >10min
-99346757838434834886542                 >48h
-77631003455214677542311                 >10min
-23964376768701928340034                 kein auscheck
-55638471099438572108556                 - Zeit
-84552276793340958450995                 >10min
-68345254400506854834562                 selbes lager
-67424886737245693583645                 doppelt auscheck
-56993454245564893300000                 kein Eintrag
-"""

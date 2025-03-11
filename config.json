@@ -1,0 +1,9 @@
+
+{
+    "server": "sc-db-server.database.windows.net",
+    "database": "supplychain",
+    "username": "rse",
+    "password": "Pa$$w0rd",
+    "password_cryp": "mysecretpassword",
+    "init_vector_crypt": "passwort-salzen!"
+}
