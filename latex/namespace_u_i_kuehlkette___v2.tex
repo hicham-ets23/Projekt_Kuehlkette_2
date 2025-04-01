@@ -1,0 +1,328 @@
+\doxysection{UIKuehlkette\+\_\+\+V2 Namespace Reference}
+\hypertarget{namespace_u_i_kuehlkette___v2}{}\label{namespace_u_i_kuehlkette___v2}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_ad992afe995c7586a7b9d5d8cedae2e36}{load\+\_\+config}} ()
+\begin{DoxyCompactList}\small\item\em Lädt Vertrauliche Daten us der config File mit gitignore Eintrag. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a0a36f95d21256a2b7b8440c578ef69c9}\label{namespace_u_i_kuehlkette___v2_a0a36f95d21256a2b7b8440c578ef69c9} 
+{\bfseries get\+\_\+outdoor\+\_\+temperature} (plz, dt\+\_\+obj, api\+\_\+key)
+\item 
+\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_af5a39a9ccf1b2ce039b559e8f56a696d}{decrypt\+\_\+value}} (encrypted\+\_\+data)
+\begin{DoxyCompactList}\small\item\em Entschlüsselt einen verschlüsselten Datenbankwert mittels AES im CBC-\/\+Modus. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_aba82bd644b5e8d45359d41bce67c0ebe}{fetch\+\_\+data}} ()
+\begin{DoxyCompactList}\small\item\em Führt eine Datenbankabfrage zur Kühlkette aus und ruft die zugehörigen Transportdaten ab. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_acd0ea598b7ce595807f467bd4c70f8cb}{display\+\_\+results}} (results, transport\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Zeigt die abgerufenen und entschlüsselten Transportdaten im GUI an. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_afa6c917b984c3f0b2f2c7e3153a8fa8e}{set\+\_\+german}} ()
+\begin{DoxyCompactList}\small\item\em Setzt die Sprache der Benutzeroberfläche auf Deutsch. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a1822d4a74dcdb4cafad048f7d5c2df44}\label{namespace_u_i_kuehlkette___v2_a1822d4a74dcdb4cafad048f7d5c2df44} 
+{\bfseries set\+\_\+english} ()
+\begin{DoxyCompactList}\small\item\em Setzt die Sprache der Benutzeroberfläche auf Englisch. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a16e50f6442fa407170b0039a60bcfe77}\label{namespace_u_i_kuehlkette___v2_a16e50f6442fa407170b0039a60bcfe77} 
+{\bfseries set\+\_\+arabic} ()
+\begin{DoxyCompactList}\small\item\em Setzt die Sprache der Benutzeroberfläche auf Arabisch. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_ab72e6aa96d548079c3316c85199961e6}{update\+\_\+gui\+\_\+language}} ()
+\begin{DoxyCompactList}\small\item\em Aktualisiert alle GUI-\/\+Elemente basierend auf der aktuellen Spracheinstellung. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a752e1096d4d92538b504bf9e5b745255}\label{namespace_u_i_kuehlkette___v2_a752e1096d4d92538b504bf9e5b745255} 
+{\bfseries config} = \mbox{\hyperlink{namespace_u_i_kuehlkette___v2_ad992afe995c7586a7b9d5d8cedae2e36}{load\+\_\+config}}()
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_aa8bb3102116a33b800d35558d7221cfc}\label{namespace_u_i_kuehlkette___v2_aa8bb3102116a33b800d35558d7221cfc} 
+{\bfseries server} = config\mbox{[}"{}server"{}\mbox{]}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_ab261a2d03a9e14a4699deb243dc77a8f}\label{namespace_u_i_kuehlkette___v2_ab261a2d03a9e14a4699deb243dc77a8f} 
+{\bfseries database} = config\mbox{[}"{}database"{}\mbox{]}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a7da639a150fd530eaaef6bfafe6a7f70}\label{namespace_u_i_kuehlkette___v2_a7da639a150fd530eaaef6bfafe6a7f70} 
+{\bfseries username} = config\mbox{[}"{}username"{}\mbox{]}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a1743edc8e5a03b6cd4f098118ebf2165}\label{namespace_u_i_kuehlkette___v2_a1743edc8e5a03b6cd4f098118ebf2165} 
+{\bfseries password} = config\mbox{[}"{}password"{}\mbox{]}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_ad0be574b2ca121e611c49f04a5096338}\label{namespace_u_i_kuehlkette___v2_ad0be574b2ca121e611c49f04a5096338} 
+{\bfseries password\+\_\+cryp} = config\mbox{[}"{}password\+\_\+cryp"{}\mbox{]}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_af781a4dc3c9a13148f9a86cad27746fd}\label{namespace_u_i_kuehlkette___v2_af781a4dc3c9a13148f9a86cad27746fd} 
+{\bfseries init\+\_\+vector\+\_\+crypt} = config\mbox{[}"{}init\+\_\+vector\+\_\+crypt"{}\mbox{]}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a0fe19c586e35caeadb563533a325b658}\label{namespace_u_i_kuehlkette___v2_a0fe19c586e35caeadb563533a325b658} 
+{\bfseries api\+\_\+key} = config\mbox{[}"{}api\+\_\+key"{}\mbox{]}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a3e152630d09fc9f889554265f72e0874}\label{namespace_u_i_kuehlkette___v2_a3e152630d09fc9f889554265f72e0874} 
+{\bfseries decode\+\_\+key} = b64decode(config\mbox{[}"{}decode\+\_\+key"{}\mbox{]})
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a9d61de2e999519fc869e4fb871ddefdf}\label{namespace_u_i_kuehlkette___v2_a9d61de2e999519fc869e4fb871ddefdf} 
+{\bfseries decode\+\_\+iv} = b64decode(config\mbox{[}"{}decode\+\_\+iv"{}\mbox{]})
+\item 
+tuple \mbox{\hyperlink{namespace_u_i_kuehlkette___v2_ae9124589cb90764b6333495277ff5f84}{conn\+\_\+str}}
+\item 
+list \mbox{\hyperlink{namespace_u_i_kuehlkette___v2_aab22943612abd8b39a52b71de775a5f8}{transport\+\_\+ids}}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a9c4aa309ee013d86dd7a1bb8fdfa30ef}\label{namespace_u_i_kuehlkette___v2_a9c4aa309ee013d86dd7a1bb8fdfa30ef} 
+dict {\bfseries LANGUAGES}
+\item 
+dict \mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a7e6a60b50af60b1a73ea66f0798143c0}{lang}} = LANGUAGES\mbox{[}"{}DE"{}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Hinterlegung der Übersetzungen. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a906b103ddcc081bd921effe048c34dfd}\label{namespace_u_i_kuehlkette___v2_a906b103ddcc081bd921effe048c34dfd} 
+{\bfseries root} = ctk.\+CTk()
+\begin{DoxyCompactList}\small\item\em Hauptfenster der CTk-\/\+Anwendung. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_ab4ceb478fa4590ad5a188fac07396b6f}\label{namespace_u_i_kuehlkette___v2_ab4ceb478fa4590ad5a188fac07396b6f} 
+{\bfseries label\+\_\+transport\+\_\+id} = ctk.\+CTk\+Label(\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a906b103ddcc081bd921effe048c34dfd}{root}}, text=\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a7e6a60b50af60b1a73ea66f0798143c0}{lang}}\mbox{[}"{}Transport ID eingeben\+:"{}\mbox{]}, font=("{}Arial"{}, 14))
+\begin{DoxyCompactList}\small\item\em Beschriftung für das Transport-\/\+ID Dropdown-\/\+Menü \end{DoxyCompactList}\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a726c950a045100ecb9715e8f8e89a0a8}\label{namespace_u_i_kuehlkette___v2_a726c950a045100ecb9715e8f8e89a0a8} 
+{\bfseries pady}
+\item 
+\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_ad23364b3b25ff79e7ba8d69c0ea443d5}{dropdown\+\_\+transport\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Dropdown-\/\+Menü zur Auswahl einer Transport-\/\+ID. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_aab926109db85d7b3b62532f2be91e93f}\label{namespace_u_i_kuehlkette___v2_aab926109db85d7b3b62532f2be91e93f} 
+{\bfseries frame\+\_\+results} = ctk.\+CTk\+Frame(\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a906b103ddcc081bd921effe048c34dfd}{root}}, width=1280, height=400)
+\begin{DoxyCompactList}\small\item\em Frame zur Anzeige der entschlüsselten Transportdaten. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a8767b11b58a938a2d16252a102c1bed9}\label{namespace_u_i_kuehlkette___v2_a8767b11b58a938a2d16252a102c1bed9} 
+{\bfseries padx}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_ac837fc7854fd31f4fe17c60007f0b03e}\label{namespace_u_i_kuehlkette___v2_ac837fc7854fd31f4fe17c60007f0b03e} 
+{\bfseries fill}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_ae688977cc2a7c5bf54075e3b0bc10c85}\label{namespace_u_i_kuehlkette___v2_ae688977cc2a7c5bf54075e3b0bc10c85} 
+{\bfseries expand}
+\item 
+\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_aca11fce3a8f3cca43f2f0c55d7f418cf}{button\+\_\+language\+\_\+1}} = ctk.\+CTk\+Button(\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a906b103ddcc081bd921effe048c34dfd}{root}}, text="{}EN"{}, command=\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a1822d4a74dcdb4cafad048f7d5c2df44}{set\+\_\+english}}, width=50)
+\begin{DoxyCompactList}\small\item\em Sprachumschalter-\/\+Button (z. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a1d58c2aa16384b571a3e76008dacfb0e}\label{namespace_u_i_kuehlkette___v2_a1d58c2aa16384b571a3e76008dacfb0e} 
+{\bfseries relx}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_ab0ac0f6e50058a5f3dcadb0b2324c709}\label{namespace_u_i_kuehlkette___v2_ab0ac0f6e50058a5f3dcadb0b2324c709} 
+{\bfseries rely}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a7f66e05d4e80bb16eda33247277adde7}\label{namespace_u_i_kuehlkette___v2_a7f66e05d4e80bb16eda33247277adde7} 
+{\bfseries anchor}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a44774543056cc84969b0d0140d0b82fc}\label{namespace_u_i_kuehlkette___v2_a44774543056cc84969b0d0140d0b82fc} 
+{\bfseries x}
+\item 
+\Hypertarget{namespace_u_i_kuehlkette___v2_a55a6009fdaef107b583ba12fe280b87f}\label{namespace_u_i_kuehlkette___v2_a55a6009fdaef107b583ba12fe280b87f} 
+{\bfseries y}
+\item 
+\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a108831a818b0117248a8af5cc79fbf86}{button\+\_\+language\+\_\+2}} = ctk.\+CTk\+Button(\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a906b103ddcc081bd921effe048c34dfd}{root}}, text="{}AR"{}, command=\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a16e50f6442fa407170b0039a60bcfe77}{set\+\_\+arabic}}, width=50)
+\begin{DoxyCompactList}\small\item\em Zweiter Sprachumschalter-\/\+Button (z. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Autoren: 
+David 
+Riko 
+Christian V. 
+Lars 
+Hicham 
+
+Kurs: 
+ETS23-Python-SIZ-RSE
+
+Projekt:
+ETS-CoolChainProject-2 V2.1 Phase 2
+letzte Änderung: 25.03.2025
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{namespace_u_i_kuehlkette___v2_af5a39a9ccf1b2ce039b559e8f56a696d}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!decrypt\_value@{decrypt\_value}}
+\index{decrypt\_value@{decrypt\_value}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{decrypt\_value()}{decrypt\_value()}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_af5a39a9ccf1b2ce039b559e8f56a696d} 
+UIKuehlkette\+\_\+\+V2.\+decrypt\+\_\+value (\begin{DoxyParamCaption}\item[{}]{encrypted\+\_\+data}{}\end{DoxyParamCaption})}
+
+
+
+Entschlüsselt einen verschlüsselten Datenbankwert mittels AES im CBC-\/\+Modus. 
+
+Diese Funktion verwendet einen globalen Schlüssel und Initialisierungsvektor, um verschlüsselte Spalten wie Transportstation, Kategorie und PLZ zu entschlüsseln.
+
+
+\begin{DoxyParams}{Parameters}
+{\em encrypted\+\_\+data} & Der verschlüsselte Datenwert als bytes \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Der entschlüsselte String 
+\end{DoxyReturn}
+\Hypertarget{namespace_u_i_kuehlkette___v2_acd0ea598b7ce595807f467bd4c70f8cb}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!display\_results@{display\_results}}
+\index{display\_results@{display\_results}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{display\_results()}{display\_results()}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_acd0ea598b7ce595807f467bd4c70f8cb} 
+UIKuehlkette\+\_\+\+V2.\+display\+\_\+results (\begin{DoxyParamCaption}\item[{}]{results}{, }\item[{}]{transport\+\_\+id}{}\end{DoxyParamCaption})}
+
+
+
+Zeigt die abgerufenen und entschlüsselten Transportdaten im GUI an. 
+
+Die Funktion verarbeitet die verschlüsselten Datenbankwerte, entschlüsselt relevante Spalten, berechnet Zeitdifferenzen und zeigt Warnungen für unplausible Einträge an. Ergebnisse werden dynamisch in einem CTk\+Frame dargestellt.
+
+
+\begin{DoxyParams}{Parameters}
+{\em results} & Die Ergebnisliste der SQL-\/\+Abfrage (pyodbc.\+fetchall) \\
+\hline
+{\em transport\+\_\+id} & Die aktuell ausgewählte Transport-\/\+ID für die Anzeige \\
+\hline
+\end{DoxyParams}
+\Hypertarget{namespace_u_i_kuehlkette___v2_aba82bd644b5e8d45359d41bce67c0ebe}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!fetch\_data@{fetch\_data}}
+\index{fetch\_data@{fetch\_data}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{fetch\_data()}{fetch\_data()}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_aba82bd644b5e8d45359d41bce67c0ebe} 
+UIKuehlkette\+\_\+\+V2.\+fetch\+\_\+data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Führt eine Datenbankabfrage zur Kühlkette aus und ruft die zugehörigen Transportdaten ab. 
+
+Diese Funktion stellt eine Verbindung zur SQL-\/\+Datenbank her, führt eine verknüpfte Abfrage auf den Tabellen {\ttfamily coolchain} und {\ttfamily transportstation\+\_\+crypt} aus, und übergibt die Ergebnisse zur Anzeige an die Funktion \doxylink{namespace_u_i_kuehlkette___v2_acd0ea598b7ce595807f467bd4c70f8cb}{display\+\_\+results}.
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em messagebox.\+showerror} & bei ungültiger Eingabe oder Datenbankfehler \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{namespace_u_i_kuehlkette___v2_ad992afe995c7586a7b9d5d8cedae2e36}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!load\_config@{load\_config}}
+\index{load\_config@{load\_config}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{load\_config()}{load\_config()}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_ad992afe995c7586a7b9d5d8cedae2e36} 
+UIKuehlkette\+\_\+\+V2.\+load\+\_\+config (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Lädt Vertrauliche Daten us der config File mit gitignore Eintrag. 
+
+Diese Funktion verwendet os.\+path und json.\+load um auf die Datei zuzugreifen.
+
+\begin{DoxyReturn}{Returns}
+Die hinterlegten Daten 
+\end{DoxyReturn}
+\Hypertarget{namespace_u_i_kuehlkette___v2_afa6c917b984c3f0b2f2c7e3153a8fa8e}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!set\_german@{set\_german}}
+\index{set\_german@{set\_german}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{set\_german()}{set\_german()}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_afa6c917b984c3f0b2f2c7e3153a8fa8e} 
+UIKuehlkette\+\_\+\+V2.\+set\+\_\+german (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Setzt die Sprache der Benutzeroberfläche auf Deutsch. 
+
+Aktualisiert globale Variable {\ttfamily lang} und ruft \doxylink{namespace_u_i_kuehlkette___v2_ab72e6aa96d548079c3316c85199961e6}{update\+\_\+gui\+\_\+language} auf. \Hypertarget{namespace_u_i_kuehlkette___v2_ab72e6aa96d548079c3316c85199961e6}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!update\_gui\_language@{update\_gui\_language}}
+\index{update\_gui\_language@{update\_gui\_language}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{update\_gui\_language()}{update\_gui\_language()}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_ab72e6aa96d548079c3316c85199961e6} 
+UIKuehlkette\+\_\+\+V2.\+update\+\_\+gui\+\_\+language (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Aktualisiert alle GUI-\/\+Elemente basierend auf der aktuellen Spracheinstellung. 
+
+Diese Funktion passt Texte von Labels und Buttons an die gewählte Sprache an und ruft \doxylink{namespace_u_i_kuehlkette___v2_aba82bd644b5e8d45359d41bce67c0ebe}{fetch\+\_\+data} auf, um neue Daten im Sprachkontext anzuzeigen. 
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{namespace_u_i_kuehlkette___v2_aca11fce3a8f3cca43f2f0c55d7f418cf}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!button\_language\_1@{button\_language\_1}}
+\index{button\_language\_1@{button\_language\_1}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{button\_language\_1}{button\_language\_1}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_aca11fce3a8f3cca43f2f0c55d7f418cf} 
+UIKuehlkette\+\_\+\+V2.\+button\+\_\+language\+\_\+1 = ctk.\+CTk\+Button(\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a906b103ddcc081bd921effe048c34dfd}{root}}, text="{}EN"{}, command=\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a1822d4a74dcdb4cafad048f7d5c2df44}{set\+\_\+english}}, width=50)}
+
+
+
+Sprachumschalter-\/\+Button (z. 
+
+ B. DE/\+EN) \Hypertarget{namespace_u_i_kuehlkette___v2_a108831a818b0117248a8af5cc79fbf86}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!button\_language\_2@{button\_language\_2}}
+\index{button\_language\_2@{button\_language\_2}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{button\_language\_2}{button\_language\_2}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_a108831a818b0117248a8af5cc79fbf86} 
+UIKuehlkette\+\_\+\+V2.\+button\+\_\+language\+\_\+2 = ctk.\+CTk\+Button(\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a906b103ddcc081bd921effe048c34dfd}{root}}, text="{}AR"{}, command=\mbox{\hyperlink{namespace_u_i_kuehlkette___v2_a16e50f6442fa407170b0039a60bcfe77}{set\+\_\+arabic}}, width=50)}
+
+
+
+Zweiter Sprachumschalter-\/\+Button (z. 
+
+ B. AR) \Hypertarget{namespace_u_i_kuehlkette___v2_ae9124589cb90764b6333495277ff5f84}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!conn\_str@{conn\_str}}
+\index{conn\_str@{conn\_str}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{conn\_str}{conn\_str}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_ae9124589cb90764b6333495277ff5f84} 
+tuple UIKuehlkette\+\_\+\+V2.\+conn\+\_\+str}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ =\ \ (}
+\DoxyCodeLine{00002\ \ \ \ \ f\textcolor{stringliteral}{'DRIVER=\{\{ODBC\ Driver\ 18\ for\ SQL\ Server\}\};'}}
+\DoxyCodeLine{00003\ \ \ \ \ f\textcolor{stringliteral}{'SERVER=\{server\};'}}
+\DoxyCodeLine{00004\ \ \ \ \ f\textcolor{stringliteral}{'DATABASE=\{database\};'}}
+\DoxyCodeLine{00005\ \ \ \ \ f\textcolor{stringliteral}{'UID=\{username\};'}}
+\DoxyCodeLine{00006\ \ \ \ \ f\textcolor{stringliteral}{'PWD=\{password\}'}}
+\DoxyCodeLine{00007\ )}
+
+\end{DoxyCode}
+\Hypertarget{namespace_u_i_kuehlkette___v2_ad23364b3b25ff79e7ba8d69c0ea443d5}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!dropdown\_transport\_id@{dropdown\_transport\_id}}
+\index{dropdown\_transport\_id@{dropdown\_transport\_id}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{dropdown\_transport\_id}{dropdown\_transport\_id}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_ad23364b3b25ff79e7ba8d69c0ea443d5} 
+UIKuehlkette\+\_\+\+V2.\+dropdown\+\_\+transport\+\_\+id}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ =\ \ ctk.CTkOptionMenu(}
+\DoxyCodeLine{00002\ \ \ \ \ root,}
+\DoxyCodeLine{00003\ \ \ \ \ values=transport\_ids,}
+\DoxyCodeLine{00004\ \ \ \ \ font=(\textcolor{stringliteral}{"{}Arial"{}},\ 12),}
+\DoxyCodeLine{00005\ \ \ \ \ width=600,}
+\DoxyCodeLine{00006\ \ \ \ \ fg\_color=\textcolor{stringliteral}{"{}black"{}},\ \ \textcolor{comment}{\#\ Hintergrundfarbe\ des\ drop\ down\ menu}}
+\DoxyCodeLine{00007\ \ \ \ \ button\_color=\textcolor{stringliteral}{"{}black"{}},\ \ \textcolor{comment}{\#\ Farbe\ des\ Schalters}}
+\DoxyCodeLine{00008\ \ \ \ \ button\_hover\_color=\textcolor{stringliteral}{"{}darkgray"{}},\ \ \textcolor{comment}{\#\ Farbe\ wenn\ über\ den\ Schalter/Knopf\ gefahren\ wird}}
+\DoxyCodeLine{00009\ \ \ \ \ text\_color=\textcolor{stringliteral}{"{}white"{}},\ \ \textcolor{comment}{\#\ Textfarbe}}
+\DoxyCodeLine{00010\ \ \ \ \ command=\textcolor{keyword}{lambda}\ choice:\ fetch\_data()\ \ \textcolor{comment}{\#\ Direkte\ Aufruf\ der\ Funktion\ nach\ Auswahl}}
+\DoxyCodeLine{00011\ )}
+
+\end{DoxyCode}
+
+
+Dropdown-\/\+Menü zur Auswahl einer Transport-\/\+ID. 
+
+Triggert \doxylink{namespace_u_i_kuehlkette___v2_aba82bd644b5e8d45359d41bce67c0ebe}{fetch\+\_\+data} beim Auswählen eines Eintrags. \Hypertarget{namespace_u_i_kuehlkette___v2_a7e6a60b50af60b1a73ea66f0798143c0}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!lang@{lang}}
+\index{lang@{lang}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{lang}{lang}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_a7e6a60b50af60b1a73ea66f0798143c0} 
+dict UIKuehlkette\+\_\+\+V2.\+lang = LANGUAGES\mbox{[}"{}DE"{}\mbox{]}}
+
+
+
+Hinterlegung der Übersetzungen. 
+
+Aktuell gewählte Sprache (Standard\+: Deutsch) \Hypertarget{namespace_u_i_kuehlkette___v2_aab22943612abd8b39a52b71de775a5f8}\index{UIKuehlkette\_V2@{UIKuehlkette\_V2}!transport\_ids@{transport\_ids}}
+\index{transport\_ids@{transport\_ids}!UIKuehlkette\_V2@{UIKuehlkette\_V2}}
+\doxysubsubsection{\texorpdfstring{transport\_ids}{transport\_ids}}
+{\footnotesize\ttfamily \label{namespace_u_i_kuehlkette___v2_aab22943612abd8b39a52b71de775a5f8} 
+list UIKuehlkette\+\_\+\+V2.\+transport\+\_\+ids}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ =\ \ [}
+\DoxyCodeLine{00002\ \ \ \ \ \textcolor{stringliteral}{"{}72359278599178561029675"{}},}
+\DoxyCodeLine{00003\ \ \ \ \ \textcolor{stringliteral}{"{}15668407856331648336231"{}},}
+\DoxyCodeLine{00004\ \ \ \ \ \textcolor{stringliteral}{"{}73491878556297128760578"{}},}
+\DoxyCodeLine{00005\ \ \ \ \ \textcolor{stringliteral}{"{}99346757838434834886542"{}},}
+\DoxyCodeLine{00006\ \ \ \ \ \textcolor{stringliteral}{"{}46204863139457546291334"{}},}
+\DoxyCodeLine{00007\ \ \ \ \ \textcolor{stringliteral}{"{}77631003455214677542311"{}},}
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{stringliteral}{"{}34778534098134729847267"{}},}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{stringliteral}{"{}64296734612883933474299"{}},}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{stringliteral}{"{}84356113249506843372979"{}},}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{stringliteral}{"{}23964376768701928340034"{}},}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{stringliteral}{"{}55638471099438572108556"{}},}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{stringliteral}{"{}84552276793340958450995"{}},}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{stringliteral}{"{}96853785349211053482893"{}},}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{stringliteral}{"{}68345254400506854834562"{}},}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{stringliteral}{"{}67424886737245693583645"{}},}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{stringliteral}{"{}85746762813849598680239"{}},}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{stringliteral}{"{}56993454245564893300000"{}},}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{stringliteral}{"{}95662334024905944384522"{}},}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{stringliteral}{"{}13456783852887496020345"{}},}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{stringliteral}{"{}76381745965049879836902"{}}}
+\DoxyCodeLine{00022\ ]}
+
+\end{DoxyCode}

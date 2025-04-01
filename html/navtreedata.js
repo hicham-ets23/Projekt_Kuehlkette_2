@@ -24,10 +24,27 @@
 */
 var NAVTREE =
 [
-  [ "Projekt_Kuehlkette_2", "index.html", [
-    [ "Projekt_Kuehlkette_2", "md__r_e_a_d_m_e.html", null ],
+  [ "Projekt Kühlkette", "index.html", [
+    [ "Projekt_Kuehlkette_2", "md__r_e_a_d_m_e.html", [
+      [ "Nutzt", "md__r_e_a_d_m_e.html#autotoc_md1", null ],
+      [ "Doxyfile 1.13.2, Doxygen (www.doxygen.org)", "md__r_e_a_d_m_e.html#autotoc_md2", null ],
+      [ "settings to be used by the documentation system", "md__r_e_a_d_m_e.html#autotoc_md3", null ],
+      [ "All text after a double hash (##) is considered a comment and is placed in", "md__r_e_a_d_m_e.html#autotoc_md4", null ],
+      [ "front of the TAG it is preceding.", "md__r_e_a_d_m_e.html#autotoc_md5", null ],
+      [ "All text after a single hash (#) is considered a comment and will be ignored.", "md__r_e_a_d_m_e.html#autotoc_md6", null ],
+      [ "The format is:", "md__r_e_a_d_m_e.html#autotoc_md7", null ],
+      [ "TAG = value [value, ...]", "md__r_e_a_d_m_e.html#autotoc_md8", null ],
+      [ "For lists, items can also be appended using:", "md__r_e_a_d_m_e.html#autotoc_md9", null ],
+      [ "TAG += value [value, ...]", "md__r_e_a_d_m_e.html#autotoc_md10", null ],
+      [ "Values that contain spaces should be placed between quotes (\" \").", "md__r_e_a_d_m_e.html#autotoc_md11", null ]
+    ] ],
     [ "Namespaces", "namespaces.html", [
-      [ "Namespace List", "namespaces.html", "namespaces_dup" ]
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ]
+      ] ]
     ] ]
   ] ]
 ];
