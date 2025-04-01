@@ -10,18 +10,27 @@ Kurs:
 ETS23-Python-SIZ-RSE
 
 Projekt:
-ETS-CoolChainProject-2 V1.3 Phase 2
-letzte Änderung: 24.03.2025
+ETS-CoolChainProject-2 V2.1 Phase 2
+letzte Änderung: 25.03.2025
 """
 
 import os
 import json
 import pyodbc
+import requests
 import customtkinter as ctk
 from tkinter import messagebox
 from datetime import timedelta, datetime
-import wetter_LS
+from base64 import b64decode
+from Crypto.Cipher import AES 
+from Crypto.Util.Padding import unpad 
 
+##
+# \brief Lädt Vertrauliche Daten us der config File mit gitignore Eintrag.
+#
+# Diese Funktion verwendet os.path und json.load um auf die Datei zuzugreifen.
+#
+# \return Die hinterlegten Daten
 def load_config():
     config_path = "config.json"
     if not os.path.exists(config_path):
@@ -31,7 +40,7 @@ def load_config():
             config = json.load(file)
     except json.JSONDecodeError as e:
         raise ValueError(f"Fehler beim Einlesen der JSON-Datei: {e}")
-    required_keys = ["server", "database", "username", "password", "password_cryp", "init_vector_crypt"]
+    required_keys = ["server", "database", "username", "password", "password_cryp", "init_vector_crypt", "decode_key", "decode_iv"]
     for key in required_keys:
         if key not in config:
             raise KeyError(f"Fehlender Schlüssel '{key}' in der Konfigurationsdatei.")
@@ -45,6 +54,9 @@ password = config["password"]
 password_cryp = config["password_cryp"]
 init_vector_crypt = config["init_vector_crypt"]
 api_key = config["api_key"]
+decode_key = b64decode(config["decode_key"])
+decode_iv = b64decode(config["decode_iv"])
+
 
 conn_str = (
     f'DRIVER={{ODBC Driver 18 for SQL Server}};'
@@ -76,7 +88,55 @@ transport_ids = [
     "13456783852887496020345",
     "76381745965049879836902"
 ]
-# Def Verbindung Datenbank
+
+def get_outdoor_temperature(plz, dt_obj, api_key):
+    try:
+        # PLZ + ,DE als Ort
+        location = f"{plz},DE"
+
+        # Zeit auf volle Stunde runden
+        dt_hour = dt_obj.replace(minute=0, second=0, microsecond=0)
+        timestamp = dt_hour.strftime('%Y-%m-%dT%H:%M:%S')
+
+        url = f'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{location}/{timestamp}'
+        response = requests.get(url, params={
+            'unitGroup': 'metric',
+            'key': api_key,
+            'include': 'hours'
+        })
+
+        if response.status_code == 200:
+            data = response.json()
+            temp = data["days"][0]["hours"][0]["temp"]
+            return f"{temp:.1f}°C"
+        else:
+            print(f"API-Fehler für {location} @ {timestamp}: {response.status_code}")
+            return "?"
+    except Exception as e:
+        print(f"Fehler bei Temperaturabfrage: {e}")
+        return "?"
+
+##
+# \brief Entschlüsselt einen verschlüsselten Datenbankwert mittels AES im CBC-Modus.
+#
+# Diese Funktion verwendet einen globalen Schlüssel und Initialisierungsvektor,
+# um verschlüsselte Spalten wie Transportstation, Kategorie und PLZ zu entschlüsseln.
+#
+# \param encrypted_data Der verschlüsselte Datenwert als bytes
+# \return Der entschlüsselte String
+def decrypt_value(encrypted_data): 
+    cipher = AES.new(decode_key, AES.MODE_CBC, decode_iv)
+    return unpad(cipher.decrypt(encrypted_data), AES.block_size).decode() 
+
+##
+# \brief Führt eine Datenbankabfrage zur Kühlkette aus und ruft die zugehörigen Transportdaten ab.
+#
+# Diese Funktion stellt eine Verbindung zur SQL-Datenbank her, führt eine verknüpfte Abfrage
+# auf den Tabellen `coolchain` und `transportstation_crypt` aus, und übergibt die Ergebnisse
+# zur Anzeige an die Funktion \ref display_results.
+#
+# \throws messagebox.showerror bei ungültiger Eingabe oder Datenbankfehler
+
 def fetch_data():
     transport_id = dropdown_transport_id.get()
     if not transport_id:
@@ -92,30 +152,60 @@ def fetch_data():
             SELECT cc.transportID, cc.transportstationID, ts.transportstation, ts.category, ts.plz, 
                    cc.direction, cc.datetime
             FROM coolchain cc
-            JOIN transportstation ts ON cc.transportstationID = ts.transportstationID
+            JOIN transportstation_crypt ts ON cc.transportstationID = ts.transportstationID
             WHERE cc.transportID = ?
-            ORDER BY cc.datetime ASC 
+            ORDER BY cc.datetime ASC
             
         '''
         cursor.execute(query, (transport_id,))
-        results = cursor.fetchall()  # Ergebnisse abrufen
+        results = cursor.fetchall()
         display_results(results, transport_id)
         
-    except pyodbc.Error as e:  # Fehlerbehandlung
+    except pyodbc.Error as e:
         messagebox.showerror(lang["Fehler bei Datenbankzugriff. Netzwerkverbindung prüfen."], str(e))
     finally:
         if conn:
             conn.close()
+            
+##
+# \brief Zeigt die abgerufenen und entschlüsselten Transportdaten im GUI an.
+#
+# Die Funktion verarbeitet die verschlüsselten Datenbankwerte, entschlüsselt relevante Spalten,
+# berechnet Zeitdifferenzen und zeigt Warnungen für unplausible Einträge an.
+# Ergebnisse werden dynamisch in einem CTkFrame dargestellt.
+#
+# \param results Die Ergebnisliste der SQL-Abfrage (pyodbc.fetchall)
+# \param transport_id Die aktuell ausgewählte Transport-ID für die Anzeige
 
-# Def Daten Anzeigen
 def display_results(results, transport_id):
+    decrypted_results = []
+
+    for row in results:
+        try:
+            transportID = row.transportID
+            transportstationID = row.transportstationID
+            transportstation = decrypt_value(row.transportstation)
+            category = decrypt_value(row.category)
+            plz = decrypt_value(row.plz)
+            direction = row.direction
+            datetime_obj = row.datetime
+
+            decrypted_results.append((
+                transportID, transportstationID, transportstation,
+                category, plz, direction, datetime_obj
+            ))
+        except Exception as e:
+            print(f"Fehler beim Entschlüsseln: {e}")
+            continue
+
     for widget in frame_results.winfo_children():
         widget.destroy()
 
-    if results:
+    if decrypted_results:
         headers = [
             lang["Transport ID"], lang["Transportstation ID"], lang["Ort"], lang["Kategorie"],
-            lang["PLZ"], lang["Richtung"], lang["Zeitstempel"], lang["Dauer"], lang["Warnung"]
+            lang["PLZ"], lang["Richtung"], lang["Zeitstempel"], lang["Dauer"],
+            lang["Warnung"], lang["Außentemperatur"]
         ]
 
         for i, header in enumerate(headers):
@@ -124,91 +214,144 @@ def display_results(results, transport_id):
 
         previous_datetime = None
         previous_direction = None
-        first_datetime = results[0][6]  # Spalte 'datetime' in der neuen Struktur
+        first_datetime = decrypted_results[0][6]
         last_datetime = None
         previous_location = None
 
-        for row_index, row in enumerate(results, start=1):
+        for row_index, row in enumerate(decrypted_results, start=1):
             transport_id, transportstation_id, transportstation, category, plz, direction, current_datetime = row
-
             last_datetime = current_datetime
             last_direction = direction
-            warnung = " "
+            warnung = ""
+            time_diff_str = "N/A"
 
-            # Berechnung der Zeitdifferenz
             if previous_datetime:
                 time_difference = current_datetime - previous_datetime
                 time_diff_str = str(time_difference)
 
                 if time_difference.total_seconds() < 1:
-                    warnung = lang["Nicht plausibler Zeitstempel"]
+                    warnung += lang["Nicht plausibler Zeitstempel"] + " "
 
-                if direction == "in" and time_difference > timedelta(minutes=10):
-                    warnung = lang["Übergabezeit über 10 Minuten"]
+                if direction.strip().lower() == "'in'" and time_difference > timedelta(minutes=10):
+                    warnung += lang["Übergabezeit über 10 Minuten"] + " "
 
-            else:
-                time_diff_str = "N/A"
+                # Temperaturprüfung NUR wenn "out"-Eintrag (Ende Lagerung)
+                if direction.strip().lower() == "'out'":               
+                    try:
+                        conn_temp = pyodbc.connect(conn_str)
+                        cursor_temp = conn_temp.cursor()
+                        cursor_temp.execute('''
+                            SELECT datetime, temperature
+                            FROM tempdata
+                            WHERE transportstationID = ?
+                              AND datetime BETWEEN ? AND ?
+                            ORDER BY datetime ASC
+                        ''', (transportstation_id, previous_datetime, current_datetime))
+                        temp_rows = cursor_temp.fetchall()
+                        for temp_entry in temp_rows:
+                            temp = temp_entry.temperature
+                            if temp < 2.0:
+                                warnung += lang["Temp <2°C"] + " "
+                                break
+                            elif temp > 4.0:
+                                warnung += lang["Temp >4°C"] + " "
+                                break
+                        conn_temp.close()
+                    except Exception as e:
+                        print(f"Fehler bei Temperaturabfrage: {e}")
 
-            # Überprüfung auf doppelte oder fehlende Einträge
-            if previous_direction:
-                if previous_direction == direction:
-                    warnung = lang["Doppelter oder fehlender Eintrag"]
+            # Überprüfung auf doppelte oder fehlerhafte Richtung
+            if previous_direction and previous_direction == direction:
+                warnung += lang["Doppelter oder fehlender Eintrag"] + " "
+
+            # Gleicher Ort nacheinander
+            if direction.strip().lower() == "'in'" and previous_location == transportstation:
+                warnung += lang["Transportstation ist doppelt"] + " "
 
             previous_datetime = current_datetime
             previous_direction = direction
-
-            if direction == "in" and previous_location == transportstation:
-                warnung = lang["Transportstation ist doppelt"]
-
             previous_location = transportstation
 
-            row_data = [transport_id, transportstation_id, transportstation, category, plz, direction, current_datetime, time_diff_str, warnung]
-            # Spalten in der UI anzeigen
+# Umgebungstemperatur nur bei gültiger PLZ ≠ 0 abfragen
+            if str(plz).strip() != "0":
+                outdoor_temp = get_outdoor_temperature(plz, current_datetime, api_key)
+            else:
+                outdoor_temp = " "
+            
+            row_data = [
+                transport_id, transportstation_id, transportstation, category,
+                plz, direction, current_datetime, time_diff_str, warnung.strip(), outdoor_temp
+            ]
+
             for col_index, item in enumerate(row_data):
-                if col_index == 8:  # Warnung farbig anzeigen
+                if col_index == 8 and warnung.strip():  # Warnung farbig
                     label = ctk.CTkLabel(frame_results, text=str(item), font=("Arial", 14, "bold"), text_color="red")
                 else:
                     label = ctk.CTkLabel(frame_results, text=str(item), font=("Arial", 12))
                 label.grid(row=row_index, column=col_index, padx=10, pady=5)
 
-        # Prüfung, ob die gesamte Transportdauer über 48 Stunden liegt
+
+        # Prüfung auf Transportdauer > 48h
         total_time_difference = last_datetime - first_datetime
         if total_time_difference > timedelta(hours=48):
-            final_error_label = ctk.CTkLabel(frame_results, text=lang["Transportdauer über 48 Stunden"], font=("Arial", 14, "bold"), text_color="red")
-            final_error_label.grid(row=row_index + 1, column=8, columnspan=1, pady=0)
+            final_error_label = ctk.CTkLabel(
+                frame_results,
+                text=lang["Transportdauer über 48 Stunden"],
+                font=("Arial", 14, "bold"),
+                text_color="red"
+            )
+            final_error_label.grid(row=row_index + 1, column=8, pady=0)
 
-        # Prüfung, ob die Lieferung unvollständig ist (wenn letzte Richtung 'in' war)
-        if last_direction == "in":
+        # Prüfung auf unvollständige Lieferung (letzter Eintrag war "'in'")
+        if last_direction.strip().lower() == "'in'":
             delta_to_present = datetime.now() - last_datetime
             days = delta_to_present.days
-            hours = delta_to_present.seconds // 3600    
-            final_error_label = ctk.CTkLabel(frame_results, text=lang["Lieferung nicht vollständig. Zeit seit letztem Eintrag: "] + f" {days}d {hours}h", font=("Arial", 14, "bold"), text_color="red")
-            final_error_label.grid(row=row_index + 2, column=8, columnspan=1, pady=0)
+            hours = delta_to_present.seconds // 3600
+            final_error_label = ctk.CTkLabel(
+                frame_results,
+                text=lang["Lieferung nicht vollständig. Zeit seit letztem Eintrag: "] + f"{days}d {hours}h",
+                font=("Arial", 14, "bold"),
+                text_color="red"
+            )
+            final_error_label.grid(row=row_index + 2, column=8, pady=0)
 
     else:
-        # Falls keine Daten zur Transport ID gefunden wurden
-        no_result_label = ctk.CTkLabel(frame_results, text=lang["Diese Transport ID existiert nicht: "] + transport_id, font=("Arial", 14, "bold"), text_color="black", fg_color="yellow")
+        no_result_label = ctk.CTkLabel(
+            frame_results,
+            text=lang["Diese Transport ID existiert nicht: "] + transport_id,
+            font=("Arial", 14, "bold"),
+            text_color="black",
+            fg_color="yellow"
+        )
         no_result_label.pack(pady=20)
 
-# lokalisierung DE
+##
+# \brief Setzt die Sprache der Benutzeroberfläche auf Deutsch.
+# \details Aktualisiert globale Variable \c lang und ruft \ref update_gui_language auf.
 def set_german():
     global lang
     lang = LANGUAGES["DE"]
     update_gui_language()
 
-# lokalisierung EN
+##
+# \brief Setzt die Sprache der Benutzeroberfläche auf Englisch.
 def set_english():
     global lang
     lang = LANGUAGES["EN"]
     update_gui_language()
 
-# lokalisierung AR
+##
+# \brief Setzt die Sprache der Benutzeroberfläche auf Arabisch.
 def set_arabic():
     global lang
     lang = LANGUAGES["AR"]
     update_gui_language()
 
-# update lokalisierung Button
+##
+# \brief Aktualisiert alle GUI-Elemente basierend auf der aktuellen Spracheinstellung.
+#
+# Diese Funktion passt Texte von Labels und Buttons an die gewählte Sprache an
+# und ruft \ref fetch_data auf, um neue Daten im Sprachkontext anzuzeigen.
 def update_gui_language():
     label_transport_id.configure(text=lang["Transport ID eingeben:"])
 
@@ -224,9 +367,13 @@ def update_gui_language():
         
     fetch_data()
 
-# hinterlegung der Sprachen
+## \var lang
+#  \brief Hinterlegung der Übersetzungen
 LANGUAGES = {
     "DE": {
+        "Außentemperatur": "Außentemperatur",
+        "Temp <2°C": "Temp <2°C",
+        "Temp >4°C": "Temp >4°C",
         "Transport ID":"Transport ID",
         "Transportstation ID":"Transportstation ID",
         "PLZ":"PLZ",
@@ -251,6 +398,9 @@ LANGUAGES = {
         "Temperatur": "Temperatur"
     },
     "EN": {
+        "Außentemperatur": "Outside Temperature",
+        "Temp <2°C": "Temp <2°C",
+        "Temp >4°C": "Temp >4°C",        
         "Transport ID":"Transport ID",
         "Transportstation ID":"Transportstation ID",
         "PLZ":"Postal Code",
@@ -275,6 +425,9 @@ LANGUAGES = {
         "Temperatur": "Temperature"
     },
     "AR": {
+        "Außentemperatur": "الحارارة الخارجية",
+        "Temp <2°C": "الحارارة <2°C",
+        "Temp >4°C": "الحارارة >4°C",
         "Transport ID":"معرف النقل",
         "Transportstation ID":"معرف النقل",
         "PLZ": "PLZ",
@@ -300,19 +453,26 @@ LANGUAGES = {
     }
 }
 
-# Sprache bei Start 
+## \var lang
+#  \brief Aktuell gewählte Sprache (Standard: Deutsch)
 lang = LANGUAGES["DE"]
 
 # UI Fenster aufsetzen: Dark mode, blaue Akzente, Name, Größe
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
+## \var root
+#  \brief Hauptfenster der CTk-Anwendung
 root = ctk.CTk()
 root.title("Kühlketten Überwachung")
 root.geometry("1200x700") 
 
-# Überschrift Eingabebox Knopf
+## \var label_transport_id
+#  \brief Beschriftung für das Transport-ID Dropdown-Menü
 label_transport_id = ctk.CTkLabel(root, text=lang["Transport ID eingeben:"], font=("Arial", 14))
 label_transport_id.pack(pady=(60, 10))
+## \var dropdown_transport_id
+#  \brief Dropdown-Menü zur Auswahl einer Transport-ID. 
+#  \details Triggert \ref fetch_data beim Auswählen eines Eintrags.
 dropdown_transport_id = ctk.CTkOptionMenu(
     root,
     values=transport_ids,
@@ -326,18 +486,21 @@ dropdown_transport_id = ctk.CTkOptionMenu(
 )
 dropdown_transport_id.pack(pady=(10, 20))
 
-# Rahmen für Liste
-frame_results = ctk.CTkFrame(root, width=860, height=300)
+## \var frame_results
+#  \brief Frame zur Anzeige der entschlüsselten Transportdaten.
+frame_results = ctk.CTkFrame(root, width=1280, height=400)
 frame_results.pack(pady=20, padx=20, fill="both", expand=True)
 
-# Knöpfe für Lokalisierung
+## \var button_language_1
+#  \brief Sprachumschalter-Button (z. B. DE/EN)
 button_language_1 = ctk.CTkButton(root, text="EN", command=set_english, width=50)
 button_language_1.place(relx=1.0, rely=0.0, anchor="ne", x=-80, y=20)
-
+## \var button_language_2
+#  \brief Zweiter Sprachumschalter-Button (z. B. AR)
 button_language_2 = ctk.CTkButton(root, text="AR", command=set_arabic, width=50)
 button_language_2.place(relx=1.0, rely=0.0, anchor="ne", x=-20, y=20)
 
-# Programmstart
+##
+# \brief Startet die GUI-Anwendung.
 root.mainloop()
 
-wetter_daten = wetter_LS.wetter(api_key, location, timestamp)

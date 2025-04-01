@@ -1068,7 +1068,7 @@ FILE_PATTERNS          = *.c \
                          *.md \
                          *.mm \
                          *.dox \
-                         *.py \
+                         *.py \     # HIER ist .py
                          *.pyw \
                          *.f90 \
                          *.f95 \

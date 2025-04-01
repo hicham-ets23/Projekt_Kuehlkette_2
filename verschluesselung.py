@@ -194,6 +194,8 @@ for row in cursor.fetchall():
    decrypted_category = decrypt_value(encrypted_category) 
    decrypted_plz = decrypt_value(encrypted_plz) 
      
+     
+     
    print(f"ID: {transportstationID}, Transportstation: {decrypted_transportstation}, Kategorie: {decrypted_category}, PLZ: {decrypted_plz}") 
 
 

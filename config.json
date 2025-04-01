@@ -5,5 +5,8 @@
     "username": "rse",
     "password": "Pa$$w0rd",
     "password_cryp": "mysecretpassword",
-    "init_vector_crypt": "passwort-salzen!"
+    "init_vector_crypt": "passwort-salzen!",
+    "api_key":"EFVT5R3796ZG2QMKN7KCRLYF4",
+    "decode_key": "bXlzZWNyZXRwYXNzd29yZA==",
+    "decode_iv": "cGFzc3dvcnQtc2FsemVuIQ=="
 }
